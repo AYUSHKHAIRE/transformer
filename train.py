@@ -8,7 +8,7 @@ import torch.optim as optim
 
 import tqdm
 
-BATCH_SIZE = 4
+BATCH_SIZE = 32
 
 text = "\n".join(get_dataset_text("data/raw/"))
 tokenizer = load_tokenizer("artifacts/gutenberg_tokenizer.json")
