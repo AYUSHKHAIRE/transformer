@@ -1,0 +1,2 @@
+- [Tutorial Link](https://machinelearningmastery.com/building-a-transformer-model-for-language-translation/)
+- [Datasets Link](https://www.kaggle.com/datasets/preetviradiya/english-hindi-dataset/code)
