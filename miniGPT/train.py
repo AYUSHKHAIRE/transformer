@@ -8,19 +8,19 @@ import torch.optim as optim
 
 import tqdm
 
-BATCH_SIZE = 16
+BATCH_SIZE = 32
 
 text = "\n".join(get_dataset_text("data/raw/"))
 tokenizer = load_tokenizer("artifacts/gutenberg_tokenizer.json")
 
 model_config = {
-    "num_layers": 8,
+    "num_layers": 5,
     "num_heads": 8,
     "num_kv_heads": 4,
-    "hidden_dim": 768,
-    "moe_experts": 8,
-    "moe_topk": 3,
-    "max_seq_len": 512,
+    "hidden_dim": 512,
+    "moe_experts": 5,
+    "moe_topk": 2,
+    "max_seq_len": 256,
     "vocab_size": len(tokenizer.get_vocab()),
     "dropout": 0.1,
 }
