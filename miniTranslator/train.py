@@ -44,7 +44,7 @@ CLIP_NORM = 5.0
 N_SAMPLES = 5
 MAX_LEN = 60
 N_EPOCHS = 100
-BATCH_SIZE = 8
+BATCH_SIZE = 16
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -208,8 +208,15 @@ for epoch in range(N_EPOCHS):
         optimizer.step()
         scheduler.step()
         train_epoch_loss += loss.item()
+        
+        del outputs, loss
+        del en_ids, hn_ids
+        del src_mask, tgt_mask
 
     train_loss = train_epoch_loss / len(train_dataloader)
+
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
     # Validation
     model.eval()
@@ -248,6 +255,10 @@ for epoch in range(N_EPOCHS):
                 hn_ids[:, 1:].reshape(-1)
             )
             val_epoch_loss += loss.item()
+            
+            del outputs, loss
+            del en_ids, hn_ids
+            del src_mask, tgt_mask
 
     eval_loss = val_epoch_loss / len(val_dataloader)
     print(
@@ -270,6 +281,12 @@ for epoch in range(N_EPOCHS):
     epoches_data["Train_loss"].append(train_loss)
     epoches_data["validation_loss"].append(val_epoch_loss)
       
+    del train_epoch_loss
+    del val_epoch_loss
+
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        
 # Train summary
 
 epochs = epoches_data["Count"]
