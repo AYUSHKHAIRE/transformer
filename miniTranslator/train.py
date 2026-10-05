@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 import random
 from tqdm import tqdm
 import os
-import gc
 
 # Tokenizers
 
@@ -209,16 +208,8 @@ for epoch in range(N_EPOCHS):
         optimizer.step()
         scheduler.step()
         train_epoch_loss += loss.item()
-        
-        del outputs, loss
-        del en_ids, hn_ids
-        del src_mask, tgt_mask
-        gc.collect()
 
     train_loss = train_epoch_loss / len(train_dataloader)
-
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
 
     # Validation
     model.eval()
@@ -257,10 +248,6 @@ for epoch in range(N_EPOCHS):
                 hn_ids[:, 1:].reshape(-1)
             )
             val_epoch_loss += loss.item()
-            
-            del outputs, loss
-            del en_ids, hn_ids
-            del src_mask, tgt_mask
 
     eval_loss = val_epoch_loss / len(val_dataloader)
     print(
@@ -283,14 +270,6 @@ for epoch in range(N_EPOCHS):
     epoches_data["Train_loss"].append(train_loss)
     epoches_data["validation_loss"].append(val_epoch_loss)
       
-    del train_epoch_loss
-    del val_epoch_loss
-    gc.collect()
-
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-    gc.collect()
-        
 # Train summary
 
 epochs = epoches_data["Count"]
