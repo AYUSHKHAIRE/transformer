@@ -13,6 +13,7 @@ from transformer_utils.transformer import (
 from sklearn.model_selection import train_test_split
 
 import pandas as pd
+import matplotlib.pyplot as plt
 
 import random
 from tqdm import tqdm
@@ -36,13 +37,13 @@ model_config = {
     "dropout": 0.1,
 }
 
-N_EPOCHS = 50 # inc later
+ON_KAGGLE = os.environ.get("KAGGLE_KERNEL_RUN_TYPE") is not None
 LR = 3e-4
 WARMUP_STEPS = 1000
 CLIP_NORM = 5.0
 N_SAMPLES = 5
 MAX_LEN = 60
-ON_KAGGLE = os.environ.get("KAGGLE_KERNEL_RUN_TYPE") is not None
+N_EPOCHS = 100
 BATCH_SIZE = 16
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -152,6 +153,13 @@ scheduler = optim.\
     )
 
 best_loss = float("inf")
+
+epoches_data = {
+    "Count":[],
+    "Train_loss":[],
+    "validation_loss":[]
+}
+
 for epoch in range(N_EPOCHS):
     model.train()
     train_epoch_loss = 0.0
@@ -252,13 +260,48 @@ for epoch in range(N_EPOCHS):
         os.makedirs("artifacts/model", exist_ok=True)
         torch.save(
             model.state_dict(),
-            f"artifacts/model/transformer-epoch-{epoch + 1}.pth"
+            f"artifacts/model/transformer-eng-hin.pth"
         )
         print(
             f"Saved best model "
             f"(eval loss: {eval_loss:.4f})"
         )
-        
+    epoches_data["Count"].append(epoch)
+    epoches_data["Train_loss"].append(train_loss)
+    epoches_data["validation_loss"].append(val_epoch_loss)
+      
+# Train summary
+
+epochs = epoches_data["Count"]
+train_loss = epoches_data["Train_loss"]
+val_loss = epoches_data["validation_loss"]
+plt.figure(figsize=(10, 6))
+plt.plot(
+    epochs,
+    train_loss,
+    label="Train Loss"
+)
+plt.plot(
+    epochs,
+    val_loss,
+    label="Validation Loss"
+)
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Training and Validation Loss")
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+if ON_KAGGLE:
+    plt.show()
+else:
+    plt.savefig(
+        "artifacts/model/loss_curve.png",
+        dpi=150,
+        bbox_inches="tight"
+    )
+    plt.show()
+      
 # Test a few samples
 
 def get_hindi_translation(
