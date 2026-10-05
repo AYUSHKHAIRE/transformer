@@ -44,7 +44,7 @@ CLIP_NORM = 5.0
 N_SAMPLES = 5
 MAX_LEN = 60
 N_EPOCHS = 100
-BATCH_SIZE = 16
+BATCH_SIZE = 8
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
