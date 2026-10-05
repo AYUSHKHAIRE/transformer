@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import random
 from tqdm import tqdm
 import os
+import gc
 
 # Tokenizers
 
@@ -212,6 +213,7 @@ for epoch in range(N_EPOCHS):
         del outputs, loss
         del en_ids, hn_ids
         del src_mask, tgt_mask
+        gc.collect()
 
     train_loss = train_epoch_loss / len(train_dataloader)
 
@@ -283,9 +285,11 @@ for epoch in range(N_EPOCHS):
       
     del train_epoch_loss
     del val_epoch_loss
+    gc.collect()
 
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
+    gc.collect()
         
 # Train summary
 
